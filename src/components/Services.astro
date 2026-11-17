@@ -1,0 +1,30 @@
+---
+import type { Content } from '../content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+---
+
+<section id="services" class="section section--alt" aria-labelledby="services-title">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <h2 id="services-title">{t.services.title}</h2>
+      <p>{t.services.lead}</p>
+    </div>
+    <ol class="services">
+      {
+        t.services.items.map((service, i) => (
+          <li class="service reveal" style={`--i: ${i % 2}`}>
+            <span class="service__n" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3>{service.title}</h3>
+            <p>{service.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

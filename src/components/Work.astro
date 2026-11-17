@@ -1,0 +1,72 @@
+---
+import { asset, shots, type Content } from '../content';
+import Icon from './Icon.astro';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+---
+
+<section id="work" class="section" aria-labelledby="work-title">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <h2 id="work-title">{t.projects.title}</h2>
+      <p>{t.projects.lead}</p>
+    </div>
+    <ul class="work">
+      {
+        t.projects.items.map((project, i) => {
+          const shot = shots[project.id];
+          return (
+            <li class="work__item reveal" style={`--i: ${i % 2}`}>
+              <a class="card" href={project.url} target="_blank" rel="noopener noreferrer">
+                <div class="shot">
+                  <div class="shot__bar" aria-hidden="true">
+                    <span class="shot__dots" />
+                    <span class="shot__url" translate="no">
+                      {host(project.url)}
+                    </span>
+                  </div>
+                  <div class="shot__view">
+                    {shot ? (
+                      <img
+                        src={asset(shot)}
+                        alt={t.projects.shotAlt.replace('{name}', project.name)}
+                        width="1500"
+                        height="675"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div class={`shot__empty shot__empty--${project.id}`} aria-hidden="true">
+                        <span translate="no">{project.name}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div class="card__body">
+                  <p class="card__meta">
+                    <span>{project.kind}</span>
+                    <span>{project.role}</span>
+                  </p>
+                  <h3 translate="no">{project.name}</h3>
+                  <p class="card__desc">{project.description}</p>
+                  <p class="card__foot">
+                    <span class="link">
+                      {t.projects.visit}
+                      <Icon name="arrow-up-right" />
+                      <span class="sr-only">({t.projects.newTab})</span>
+                    </span>
+                    <span class="card__credit">{t.projects.credit}</span>
+                  </p>
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>

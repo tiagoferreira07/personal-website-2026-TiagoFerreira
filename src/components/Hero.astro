@@ -1,0 +1,32 @@
+---
+import type { Content } from '../content';
+import Icon from './Icon.astro';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+---
+
+<section id="top" class="hero">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="wrap hero__inner">
+    <p class="eyebrow rise" style="--i: 0">{t.hero.eyebrow}</p>
+    <h1>
+      {
+        t.hero.title.map((line, i) => (
+          <>
+            <span class="hero__line rise" style={`--i: ${i + 1}`}>
+              {line}
+            </span>{' '}
+          </>
+        ))
+      }
+    </h1>
+    <p class="hero__lead rise" style="--i: 3">{t.hero.lead}</p>
+    <div class="actions rise" style="--i: 4">
+      <a class="btn" href="#contact">{t.hero.primary}<Icon name="arrow-right" /></a>
+      <a class="link" href="#work">{t.hero.secondary}<Icon name="chevron" /></a>
+    </div>
+  </div>
+</section>

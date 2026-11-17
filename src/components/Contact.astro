@@ -1,0 +1,57 @@
+---
+import { profile, type Content } from '../content';
+import Icon from './Icon.astro';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+---
+
+<footer id="contact" class="contact">
+  <div class="wrap contact__grid">
+    <div>
+      <h2>{t.contact.title}</h2>
+      <p class="contact__lead">{t.contact.lead}</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href={`mailto:${profile.email}`}>
+        <span translate="no">{profile.email}</span>
+        <Icon name="arrow-right" />
+      </a>
+      <button type="button" class="link" data-copy={profile.email} data-copied={t.contact.copied}>
+        <span aria-live="polite">{t.contact.copy}</span>
+      </button>
+    </div>
+    <ul class="contact__links">
+      <li>
+        <a class="link" href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+          LinkedIn <Icon name="arrow-up-right" />
+        </a>
+      </li>
+      <li>
+        <a class="link" href={profile.github} target="_blank" rel="noopener noreferrer">
+          GitHub <Icon name="arrow-up-right" />
+        </a>
+      </li>
+    </ul>
+    <p class="contact__note">© {new Date().getFullYear()} {profile.name}. {t.footer}</p>
+  </div>
+</footer>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const label = button?.querySelector('span');
+  if (button && label) {
+    const idle = label.textContent;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+        label.textContent = button.dataset.copied ?? '';
+        window.setTimeout(() => (label.textContent = idle), 2500);
+      } catch {
+        // Clipboard can be refused; the address is visible on the page anyway.
+      }
+    });
+  }
+</script>

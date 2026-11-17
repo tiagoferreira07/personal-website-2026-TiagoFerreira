@@ -1,0 +1,81 @@
+---
+import '../styles.css';
+import Contact from '../components/Contact.astro';
+import Header from '../components/Header.astro';
+import { LANGS, content, href, profile, type Lang } from '../content';
+
+interface Props {
+  lang: Lang;
+  page: 'home' | 'cv';
+}
+const { lang, page } = Astro.props;
+const t = content[lang];
+const pagePath = page === 'cv' ? 'cv/' : '';
+const title = page === 'cv' ? `${t.cv.title} · ${profile.name}` : t.meta.title;
+const absolute = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path);
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: 'Web Front-End Developer',
+  worksFor: { '@type': 'Organization', name: 'Fullscreen' },
+  address: { '@type': 'PostalAddress', addressLocality: 'Vila Nova de Gaia', addressCountry: 'PT' },
+  sameAs: [profile.linkedin, profile.github],
+};
+const favicon =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23000'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='14' fill='%238CCBFF'%3ETF%3C/text%3E%3C/svg%3E";
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={t.meta.description} />
+    {LANGS.map((code) => <link rel="alternate" hreflang={code} href={absolute(href(code, pagePath))} />)}
+    <link rel="icon" href={favicon} />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skip}</a>
+    <Header t={t} lang={lang} page={page} />
+    <main id="main">
+      <slot />
+    </main>
+    <Contact t={t} />
+    <script>
+      // Fade elements up the first time they enter the viewport.
+      const items = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
+        );
+        items.forEach((item) => observer.observe(item));
+      } else {
+        items.forEach((item) => item.classList.add('is-in'));
+      }
+    </script>
+    <noscript>
+      <style>
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+      </style>
+    </noscript>
+  </body>
+</html>

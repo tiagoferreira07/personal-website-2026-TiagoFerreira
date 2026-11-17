@@ -1,0 +1,52 @@
+---
+import { LANGS, href, profile, type Content, type Lang } from '../content';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+  page: 'home' | 'cv';
+}
+const { t, lang, page } = Astro.props;
+const home = page === 'home' ? '' : href(lang);
+const pagePath = page === 'cv' ? 'cv/' : '';
+const links = [
+  { href: `${home}#work`, label: t.nav.work },
+  { href: `${home}#services`, label: t.nav.services },
+  { href: href(lang, 'cv/'), label: t.nav.cv, cv: true },
+  { href: '#contact', label: t.nav.contact },
+];
+---
+
+<header class="header">
+  <div class="wrap header__row">
+    <a class="brand" href={href(lang)} translate="no">{profile.name}</a>
+    <nav class="nav" aria-label={t.navLabel}>
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class={link.cv ? 'nav__cv' : undefined}
+            aria-current={link.cv && page === 'cv' ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <nav class="lang" aria-label={t.langLabel}>
+      {
+        LANGS.map((code) => (
+          <a
+            class="lang__btn"
+            href={href(code, pagePath)}
+            lang={code}
+            hreflang={code}
+            aria-current={code === lang ? 'true' : undefined}
+          >
+            {code.toUpperCase()}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>

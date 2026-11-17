@@ -1,0 +1,23 @@
+---
+import { asset, href, profile, type Content, type Lang } from '../content';
+import Icon from './Icon.astro';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+---
+
+<section id="about" class="section" aria-labelledby="about-title">
+  <div class="wrap">
+    <div class="about reveal">
+      <img src={asset('tiago.webp')} alt={profile.name} width="250" height="250" loading="lazy" />
+      <div>
+        <h2 id="about-title">{t.about.title}</h2>
+        <p>{t.about.text}</p>
+        <a class="link" href={href(lang, 'cv/')}>{t.about.cta}<Icon name="chevron" /></a>
+      </div>
+    </div>
+  </div>
+</section>

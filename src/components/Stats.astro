@@ -1,0 +1,23 @@
+---
+import { SINCE, type Content } from '../content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+// Computed when the site is built; rebuild once a year to keep it current.
+const years = String(new Date().getFullYear() - SINCE);
+---
+
+<section class="stats" aria-label={t.stats.label}>
+  <dl class="wrap stats__grid">
+    {
+      t.stats.items.map(([value, label], i) => (
+        <div class="stat reveal" style={`--i: ${i}`}>
+          <dt>{label}</dt>
+          <dd>{value.replace('{years}', years)}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>

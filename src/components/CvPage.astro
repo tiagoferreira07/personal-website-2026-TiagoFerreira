@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { content, type Lang } from '../content';
+import CvBody from './CvBody.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<Base lang={lang} page="cv">
+  <CvBody t={content[lang]} lang={lang} />
+</Base>

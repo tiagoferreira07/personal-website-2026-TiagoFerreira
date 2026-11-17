@@ -1,0 +1,96 @@
+---
+import { asset, href, profile, type Content, type Lang } from '../content';
+import Icon from './Icon.astro';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+
+const month = new Intl.DateTimeFormat(lang === 'pt' ? 'pt-PT' : 'en-GB', { month: 'short', year: 'numeric' });
+function formatMonth(iso: string) {
+  const [year, m] = iso.split('-').map(Number);
+  return month.format(new Date(year, m - 1, 1));
+}
+---
+
+<article class="cv wrap">
+  <a class="link cv__back" href={href(lang)}><Icon name="arrow-left" />{t.cv.back}</a>
+  <header class="cv__head">
+    <img src={asset('tiago.webp')} alt="" width="250" height="250" />
+    <div>
+      <p class="eyebrow">{t.cv.title}</p>
+      <h1 translate="no">{profile.name}</h1>
+      <p class="cv__role">{t.cv.role} · {t.cv.place}</p>
+    </div>
+  </header>
+  <p class="cv__summary">{t.cv.summary}</p>
+  <ul class="cv__contacts">
+    <li><a href={`mailto:${profile.email}`} translate="no">{profile.email}</a></li>
+    <li><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+    <li><a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
+    <li class="cv__print">
+      <button type="button" class="btn btn--small" data-print>{t.cv.print}</button>
+    </li>
+  </ul>
+
+  <section class="cv-section" aria-labelledby="experience-title">
+    <h2 id="experience-title">{t.experience.title}</h2>
+    <ol class="rows">
+      {
+        t.experience.items.map((job) => (
+          <li class="entry">
+            <p class="entry__dates">
+              <time datetime={job.start}>{formatMonth(job.start)}</time>
+              {' → '}
+              {job.end ? <time datetime={job.end}>{formatMonth(job.end)}</time> : t.experience.present}
+            </p>
+            <h3>{job.title}</h3>
+            <p class="entry__org">
+              <span translate="no">{job.company}</span> · {job.place}
+            </p>
+            <ul class="entry__points">
+              {job.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="cv-section" aria-labelledby="skills-title">
+    <h2 id="skills-title">{t.skills.title}</h2>
+    <div>
+      <h3 class="label">{t.skills.tech}</h3>
+      <ul class="grid-list">{t.skills.techItems.map((item) => <li>{item}</li>)}</ul>
+      <h3 class="label">{t.skills.languages}</h3>
+      <ul class="grid-list">{t.skills.languageItems.map((item) => <li>{item}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="cv-section" aria-labelledby="education-title">
+    <h2 id="education-title">{t.education.title}</h2>
+    <ol class="rows">
+      {
+        t.education.items.map((course) => (
+          <li class="entry">
+            <p class="entry__dates">
+              <time datetime={course.start}>{course.start}</time>
+              {' → '}
+              <time datetime={course.end}>{course.end}</time>
+            </p>
+            <h3>{course.title}</h3>
+            <p class="entry__org" translate="no">{course.school}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</article>
+
+<script>
+  document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+</script>
